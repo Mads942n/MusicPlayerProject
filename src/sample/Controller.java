@@ -16,6 +16,7 @@ public class Controller implements Initializable {
     @FXML
     private Button play;
 
+
     private MediaPlayer mp;
     private Media me;
 
@@ -28,7 +29,7 @@ public class Controller implements Initializable {
      */
     public void initialize(URL location, ResourceBundle resources){
         // Build the path to the location of the media file
-        String path = new File("src/sample/media/file_example_MP4_640_3MG.mp4").getAbsolutePath();
+        String path = new File("src/sample/media/SampleAudio_0.4mb.mp3").getAbsolutePath();
         // Create new Media object (the actual media content)
         me = new Media(new File(path).toURI().toString());
         // Create new MediaPlayer and attach the media to be played
@@ -50,5 +51,13 @@ public class Controller implements Initializable {
         // Play the mediaPlayer with the attached media
         mp.play();
     }
+
+    @FXML
+    private void handlePause()
+    {
+        // Play the mediaPlayer with the attached media
+        mp.pause();
+    }
+
 
 }
