@@ -6,7 +6,7 @@
     - Forward
     - (See time on song)
     - Make Playlist
-    - See list of mp3 files in folder (Search function)
+    - See list of mp3 files in folder (Search function) - Bo
     - Button to add songs to playlists
     
     - Add properties to database
