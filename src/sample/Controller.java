@@ -57,9 +57,16 @@ public class Controller implements Initializable {
     @FXML
     private TextField Search;
 
+    @FXML
+    private MouseEvent event;
+
 
     private MediaPlayer mp;
     private Media me;
+
+
+    private String Song;
+    public int getFocusedIndex;
 
     ObservableList<Songs> Songlist = FXCollections.observableArrayList(
             new Songs(1,"Bando Bitch", "Branco"),
@@ -77,6 +84,7 @@ public class Controller implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources){
+
         // Build the path to the location of the media file
         String path = new File("src/sample/media/SampleAudio_0.4mb.mp3").getAbsolutePath();
         // Create new Media object (the actual media content)
@@ -120,6 +128,20 @@ public class Controller implements Initializable {
         sortedData.comparatorProperty().bind(SongsTable.comparatorProperty());
         SongsTable.setItems(sortedData);
 
+
+
+
+    }
+
+
+    @FXML
+    private void displaySelectedItem(){
+
+        Songs Song = SongsTable.getSelectionModel().getSelectedItem();
+
+        System.out.println(Song.SongId);
+
+
     }
 
     @FXML
@@ -130,6 +152,7 @@ public class Controller implements Initializable {
     {
         // Play the mediaPlayer with the attached media
         mp.play();
+        mp.setAutoPlay(true);
     }
 
     @FXML
