@@ -28,6 +28,9 @@ import java.util.logging.Logger;
 
 public class Controller implements Initializable {
     @FXML
+    private Button autoplayNext;
+
+    @FXML
     private Button pause;
 
     @FXML
@@ -64,8 +67,15 @@ public class Controller implements Initializable {
     private MediaPlayer mp;
     private Media me;
 
+    public String path;
 
-    private String Song;
+    private Boolean autoplay;
+    private int autoplayInt;
+
+
+    private String filePath;
+    private String SongSelected;
+
     public int getFocusedIndex;
 
     ObservableList<Songs> Songlist = FXCollections.observableArrayList(
@@ -85,8 +95,9 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources){
 
+
         // Build the path to the location of the media file
-        String path = new File("src/sample/media/SampleAudio_0.4mb.mp3").getAbsolutePath();
+        path = new File("src/sample/media/SampleAudio.mp3").getAbsolutePath();
         // Create new Media object (the actual media content)
         me = new Media(new File(path).toURI().toString());
         // Create new MediaPlayer and attach the media to be played
@@ -133,13 +144,64 @@ public class Controller implements Initializable {
 
     }
 
+    public void autoplayNext(){
+
+        Songs Song = SongsTable.getSelectionModel().getSelectedItem();
+
+
+                    while (autoplay = true) {
+                        mp.setOnEndOfMedia(() -> {
+
+                            DB.selectSQL("Select fldFilePath from tblSonglist where fldSongID = " + Song.SongId + " + 1");
+
+
+                            filePath = DB.getData();
+
+                            System.out.println(filePath);
+
+                            path = new File("src/sample/media/" + filePath).getAbsolutePath();
+
+                            me = new Media(new File(path).toURI().toString());
+
+                            mp = new MediaPlayer(me);
+
+                            mp.setAutoPlay(true);
+
+                            System.out.println(path);
+
+                        });
+                    }
+
+
+
+    }
+
+
 
     @FXML
     private void displaySelectedItem(){
 
         Songs Song = SongsTable.getSelectionModel().getSelectedItem();
 
-        System.out.println(Song.SongId);
+
+        DB.selectSQL("Select fldFilePath from tblSonglist where fldSongID = " + Song.SongId);
+
+        filePath = DB.getData();
+
+        path = new File("src/sample/media/" + filePath).getAbsolutePath();
+
+        me = new Media(new File(path).toURI().toString());
+
+        mp = new MediaPlayer(me);
+
+        mp.setAutoPlay(true);
+
+
+        System.out.println("Song ID = " + Song.SongId + "\nFilename = " + filePath);
+
+
+
+
 
 
     }
@@ -150,7 +212,7 @@ public class Controller implements Initializable {
      */
     private void handlePlay()
     {
-        // Play the mediaPlayer with the attached media
+
         mp.play();
         mp.setAutoPlay(true);
     }
@@ -158,9 +220,26 @@ public class Controller implements Initializable {
     @FXML
     private void handlePause()
     {
+
+
         // Play the mediaPlayer with the attached media
         mp.pause();
     }
+
+    @FXML
+    private void handleautoplayNext()
+    {
+
+        mp.getStatus();
+
+        autoplay = true;
+
+        autoplayNext();
+
+        System.out.println(autoplay);
+
+    }
+
 
 
 
