@@ -4,8 +4,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -20,11 +18,7 @@ import javafx.scene.control.ListView;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Observable;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Controller implements Initializable {
     @FXML
@@ -64,7 +58,13 @@ public class Controller implements Initializable {
     private MouseEvent event;
 
     @FXML
-    private ListView<?> PlayListList;
+    private ListView<Playlist> PlayListList;
+
+    @FXML
+    private Button NewPlaylist;
+
+    @FXML
+    private Button DeletePlayList;
 
 
     private MediaPlayer mp;
@@ -88,36 +88,27 @@ public class Controller implements Initializable {
     );
 
 
+        ObservableList<Playlist> PlayListArray = FXCollections.observableArrayList(
+                new Playlist("70's"),
+                new Playlist("Party"),
+                new Playlist("Christmas Songs")
 
-    /**
-     * This method is invoked automatically in the beginning. Used for initializing, loading data etc.
-     *
-     * @param location
-     * @param resources
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources){
+        );
 
+    //updates the PLaylistviewer
+    public void updatePlaylistTable(){
+        PlayListList.setItems(PlayListArray);
 
-        // Build the path to the location of the media file
-        path = new File("src/sample/media/SampleAudio.mp3").getAbsolutePath();
-        // Create new Media object (the actual media content)
-        me = new Media(new File(path).toURI().toString());
-        // Create new MediaPlayer and attach the media to be played
-        mp = new MediaPlayer(me);
-        //
-        // mp.setAutoPlay(true);
-        // If autoplay is turned of the method play(), stop(), pause() etc controls how/when medias are played
-        mp.setAutoPlay(false);
+    }
 
-        SongsTable.setItems(Songlist);
-
+    void search_song(){
         //Search function
 
         SongId.setCellValueFactory(new PropertyValueFactory<Songs, Integer>("SongId"));
         Title.setCellValueFactory(new PropertyValueFactory<Songs, String>("Title"));
         Artist.setCellValueFactory(new PropertyValueFactory<Songs, String>("Artist"));
 
+        SongsTable.setItems(Songlist);
         //ObservableList to filteredList
         FilteredList<Songs> filteredData = new FilteredList<>(Songlist, b -> true);
 
@@ -141,7 +132,29 @@ public class Controller implements Initializable {
         SortedList<Songs> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(SongsTable.comparatorProperty());
         SongsTable.setItems(sortedData);
+    }
 
+    /**
+     * This method is invoked automatically in the beginning. Used for initializing, loading data etc.
+     *
+     * @param location
+     * @param resources
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources){
+        updatePlaylistTable();
+        search_song();
+
+        // Build the path to the location of the media file
+        path = new File("src/sample/media/SampleAudio.mp3").getAbsolutePath();
+        // Create new Media object (the actual media content)
+        me = new Media(new File(path).toURI().toString());
+        // Create new MediaPlayer and attach the media to be played
+        mp = new MediaPlayer(me);
+        //
+        // mp.setAutoPlay(true);
+        // If autoplay is turned of the method play(), stop(), pause() etc controls how/when medias are played
+        mp.setAutoPlay(false);
 
 
 
@@ -203,10 +216,6 @@ public class Controller implements Initializable {
         System.out.println("Song ID = " + Song.SongId + "\nFilename = " + filePath);
 
 
-
-
-
-
     }
 
     @FXML
@@ -243,7 +252,22 @@ public class Controller implements Initializable {
 
     }
 
+    @FXML
+    private void handleNewPlayList(){
+
+        PlayListArray.add(new Playlist("Nemt"));
+        updatePlaylistTable();
 
 
+    }
+    @FXML
+    private void handleDeletePlayList() {
+        Playlist name = PlayListList.getSelectionModel().getSelectedItem();
 
+        PlayListArray.remove(PlayListArray.indexOf(name));
+
+        System.out.println(name);
+        updatePlaylistTable();
+
+    }
 }
