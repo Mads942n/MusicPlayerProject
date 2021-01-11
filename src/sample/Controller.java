@@ -1,6 +1,9 @@
 package sample;
-
+import javafx.application.Application;
 import javafx.collections.transformation.FilteredList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,12 +18,22 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
+    @FXML
+    private TextField NewPlaylistName;
+
     @FXML
     private Button autoplayNext;
 
@@ -82,26 +95,26 @@ public class Controller implements Initializable {
     public int getFocusedIndex;
 
     ObservableList<Songs> Songlist = FXCollections.observableArrayList(
-            new Songs(1,"Bando Bitch", "Branco"),
-            new Songs(2,"WITHOUT YOU", "The Kid LAROI"),
-            new Songs(3,"Anyone", "Justin Bieber")
+            new Songs(1, "Bando Bitch", "Branco"),
+            new Songs(2, "WITHOUT YOU", "The Kid LAROI"),
+            new Songs(3, "Anyone", "Justin Bieber")
     );
 
 
-        ObservableList<Playlist> PlayListArray = FXCollections.observableArrayList(
-                new Playlist("70's"),
-                new Playlist("Party"),
-                new Playlist("Christmas Songs")
+    ObservableList<Playlist> PlayListArray = FXCollections.observableArrayList(
+            new Playlist("70's"),
+            new Playlist("Party"),
+            new Playlist("Christmas Songs")
 
-        );
+    );
 
     //updates the PLaylistviewer
-    public void updatePlaylistTable(){
+    public void updatePlaylistTable() {
         PlayListList.setItems(PlayListArray);
 
     }
 
-    void search_song(){
+    void search_song() {
         //Search function
 
         SongId.setCellValueFactory(new PropertyValueFactory<Songs, Integer>("SongId"));
@@ -122,8 +135,7 @@ public class Controller implements Initializable {
 
                 if (Songs.getTitle().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches song title
-                }
-                else if  (Songs.getArtist().toLowerCase().contains(lowerCaseFilter))
+                } else if (Songs.getArtist().toLowerCase().contains(lowerCaseFilter))
                     return true;// Filter matches artist
                 else
                     return false; // Does not match.
@@ -141,7 +153,7 @@ public class Controller implements Initializable {
      * @param resources
      */
     @Override
-    public void initialize(URL location, ResourceBundle resources){
+    public void initialize(URL location, ResourceBundle resources) {
         updatePlaylistTable();
         search_song();
 
@@ -157,10 +169,9 @@ public class Controller implements Initializable {
         mp.setAutoPlay(false);
 
 
-
     }
 
-    public void autoplayNext(){
+    public void autoplayNext() {
 
         Songs Song = SongsTable.getSelectionModel().getSelectedItem();
 
@@ -189,13 +200,11 @@ public class Controller implements Initializable {
         }
 
 
-
     }
 
 
-
     @FXML
-    private void displaySelectedItem(){
+    private void displaySelectedItem() {
 
         Songs Song = SongsTable.getSelectionModel().getSelectedItem();
 
@@ -222,16 +231,14 @@ public class Controller implements Initializable {
     /**
      * Handler for the play button
      */
-    private void handlePlay()
-    {
+    private void handlePlay() {
 
         mp.play();
         mp.setAutoPlay(true);
     }
 
     @FXML
-    private void handlePause()
-    {
+    private void handlePause() {
 
 
         // Play the mediaPlayer with the attached media
@@ -239,8 +246,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void handleautoplayNext()
-    {
+    private void handleautoplayNext() {
 
         mp.getStatus();
 
@@ -253,10 +259,22 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void handleNewPlayList(){
+    private void handleNewPlayList() throws IOException {
 
-        PlayListArray.add(new Playlist("Nemt"));
-        updatePlaylistTable();
+        //shows the textfield
+        NewPlaylistName.setVisible(true);
+
+
+    }
+    @FXML
+    public void handleEnterPressed(KeyEvent event){
+    if (event.getCode() == KeyCode.ENTER) {
+        String NewPlayListTyped = NewPlaylistName.getText();
+        PlayListArray.add(new Playlist(NewPlayListTyped));
+        NewPlaylistName.setVisible(false);
+        NewPlaylistName.clear();
+    }
+
 
 
     }
@@ -264,10 +282,11 @@ public class Controller implements Initializable {
     private void handleDeletePlayList() {
         Playlist name = PlayListList.getSelectionModel().getSelectedItem();
 
-        PlayListArray.remove(PlayListArray.indexOf(name));
+        PlayListArray.remove(name);
 
         System.out.println(name);
         updatePlaylistTable();
 
     }
+
 }
