@@ -1,10 +1,11 @@
 package sample;
 
 public class Playlist {
-
     String PlayListTitle;
 
+
     public Playlist(String PlayListTitle){
+
         this.PlayListTitle = PlayListTitle;
     }
     public String getPlayListTitle() {

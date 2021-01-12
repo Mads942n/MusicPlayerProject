@@ -94,6 +94,8 @@ public class Controller implements Initializable {
 
     public int getFocusedIndex;
 
+    private String SelectedPlaylist;
+
     ObservableList<Songs> Songlist = FXCollections.observableArrayList(
             new Songs(1, "Bando Bitch", "Branco"),
             new Songs(2, "WITHOUT YOU", "The Kid LAROI"),
@@ -102,17 +104,45 @@ public class Controller implements Initializable {
 
 
     ObservableList<Playlist> PlayListArray = FXCollections.observableArrayList(
-            new Playlist("70's"),
-            new Playlist("Party"),
-            new Playlist("Christmas Songs")
-
     );
 
     //updates the PLaylistviewer
     public void updatePlaylistTable() {
+
+        DB.selectSQL("Select fldPlaylistName FROM tblPlaylists");
+
+        PlayListArray.clear();
+
+        do{
+            String PLaylistData = DB.getData();
+            if (PLaylistData.equals(DB.NOMOREDATA)){
+                break;
+            } else {
+
+                PlayListArray.add(new Playlist(PLaylistData));
+
+            }
+        }while(true);
+
         PlayListList.setItems(PlayListArray);
 
     }
+
+    public void newPlayList(){
+
+        //gets the text from the textfield
+        String NewPlayListTyped = NewPlaylistName.getText();
+
+        //inserts the playlist name into database
+        DB.insertSQL("INSERT INTO tblPLaylists (fldPlaylistName) VALUES ('" + NewPlayListTyped + "')");
+
+        NewPlaylistName.setVisible(false);
+        NewPlaylistName.clear();
+
+        //updating the Listview with the new playlist
+        updatePlaylistTable();
+    }
+
 
     void search_song() {
         //Search function
@@ -266,25 +296,24 @@ public class Controller implements Initializable {
 
 
     }
+
     @FXML
-    public void handleEnterPressed(KeyEvent event){
+    public void handleEnterNewPlaylist(KeyEvent event){
     if (event.getCode() == KeyCode.ENTER) {
-        String NewPlayListTyped = NewPlaylistName.getText();
-        PlayListArray.add(new Playlist(NewPlayListTyped));
-        NewPlaylistName.setVisible(false);
-        NewPlaylistName.clear();
+        newPlayList();
     }
 
 
 
     }
+
     @FXML
     private void handleDeletePlayList() {
-        Playlist name = PlayListList.getSelectionModel().getSelectedItem();
+        Playlist SelectedPlaylist = PlayListList.getSelectionModel().getSelectedItem();
 
-        PlayListArray.remove(name);
+        System.out.println(SelectedPlaylist);
+        DB.deleteSQL("DELETE FROM tblPlaylists WHERE fldPLaylistName = '" + SelectedPlaylist + "'");
 
-        System.out.println(name);
         updatePlaylistTable();
 
     }
