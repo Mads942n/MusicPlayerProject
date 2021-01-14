@@ -2,13 +2,13 @@ package sample;
 
 public class Songs {
 
-    int SongId;
+    String SongId;
     String title;
 
     String artist;
 
 
-    public Songs(int SongId, String title, String artist) {
+    public Songs(String SongId, String title, String artist) {
         this.SongId = SongId;
         this.title = title;
         this.artist = artist;
@@ -22,11 +22,11 @@ public class Songs {
         return artist;
     }
 
-    public void setSongId(int SongId) {
+    public void setSongId(String SongId) {
         this.SongId = SongId;
     }
 
-    public int getSongId() {
+    public String getSongId() {
         return SongId;
     }
 

@@ -1,9 +1,5 @@
 package sample;
-import javafx.application.Application;
 import javafx.collections.transformation.FilteredList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,16 +14,13 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
-import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -44,7 +37,7 @@ public class Controller implements Initializable {
     private Button play;
 
     @FXML
-    private Button AllSongs;
+    private Button Libary;
 
     @FXML
     private AnchorPane ap;
@@ -56,7 +49,7 @@ public class Controller implements Initializable {
     private TableView<Songs> SongsTable;
 
     @FXML
-    private TableColumn<Songs, Integer> SongId;
+    private TableColumn<Songs, String> SongId;
 
     @FXML
     private TableColumn<Songs, String> Title;
@@ -89,22 +82,131 @@ public class Controller implements Initializable {
     private int autoplayInt;
 
 
+    private String getPlaylistID;
     private String filePath;
     private String SongSelected;
 
-    public int getFocusedIndex;
+    private String getPlaylistName;
+    ObservableList<Songs> Songlist = FXCollections.observableArrayList();
+    ObservableList<Playlist> PlayListArray = FXCollections.observableArrayList();
 
-    private String SelectedPlaylist;
+    ArrayList<String> songIdArray = new ArrayList<>();
+    ArrayList<String> titleArray = new ArrayList<>();
+    ArrayList<String> artistArray = new ArrayList<>();
 
-    ObservableList<Songs> Songlist = FXCollections.observableArrayList(
-            new Songs(1, "Bando Bitch", "Branco"),
-            new Songs(2, "WITHOUT YOU", "The Kid LAROI"),
-            new Songs(3, "Anyone", "Justin Bieber")
-    );
+    @FXML
+    private void choosePlaylist(){
+        songIdArray.clear();
+        titleArray.clear();
+        artistArray.clear();
+        Songlist.clear();
+        try {
+            Playlist SelectedPlaylist = PlayListList.getSelectionModel().getSelectedItem();
+            getPlaylistName = SelectedPlaylist.PlayListTitle;
 
 
-    ObservableList<Playlist> PlayListArray = FXCollections.observableArrayList(
-    );
+            DB.selectSQL("SELECT fldPlaylistID FROM tblPlaylists WHERE fldPlaylistName = '" + SelectedPlaylist.PlayListTitle + "'");
+            getPlaylistID = DB.getData();
+
+
+
+            DB.selectSQL("SELECT fldSongID FROM tblPlaylistsSongs where fldPlaylistID = " + getPlaylistID);
+
+            do {
+                String songId = DB.getData();
+                if (songId.equals(DB.NOMOREDATA)) {
+                    break;
+                } else {
+                    songIdArray.add(songId);
+                }
+            } while (true);
+
+            DB.selectSQL("SELECT fldTitle FROM tblSonglist INNER JOIN tblPlaylistsSongs ON " +
+                    "tblSonglist.fldSongID = tblPlaylistsSongs.fldSongID where tblPlaylistsSongs.fldPlaylistID = " + getPlaylistID);
+            do{
+                String title = DB.getData();
+                if (title.equals(DB.NOMOREDATA)) {
+                    break;
+                } else {
+                    titleArray.add(title);
+                }
+            } while (true);
+
+            DB.selectSQL("SELECT fldArtist FROM tblSonglist INNER JOIN tblPlaylistsSongs ON " +
+                    "tblSonglist.fldSongID = tblPlaylistsSongs.fldSongID where tblPlaylistsSongs.fldPlaylistID = " + getPlaylistID);
+            do{
+                String artist = DB.getData();
+                if (artist.equals(DB.NOMOREDATA)){
+                    break;
+                }else{
+                    artistArray.add(artist);
+                }
+            }while (true);
+
+            for (int i = 0; i < songIdArray.size(); i++) {
+                Songlist.add(new Songs(songIdArray.get(i), titleArray.get(i), artistArray.get(i)));
+            }
+
+            SongsTable.setItems(Songlist);
+
+
+        }catch (Exception e){
+        }
+
+
+
+
+
+
+    }
+
+    void songList(){
+        songIdArray.clear();
+        titleArray.clear();
+        artistArray.clear();
+
+        Songlist.clear();
+
+
+        SongId.setCellValueFactory(new PropertyValueFactory<Songs, String>("SongId"));
+        Title.setCellValueFactory(new PropertyValueFactory<Songs, String>("Title"));
+        Artist.setCellValueFactory(new PropertyValueFactory<Songs, String>("Artist"));
+
+        DB.selectSQL("Select fldSongId from tblSonglist");
+        do {
+            String songId = DB.getData();
+            if (songId.equals(DB.NOMOREDATA)) {
+                break;
+            } else {
+                songIdArray.add(songId);
+            }
+        } while (true);
+
+        DB.selectSQL("Select fldTitle from tblSonglist");
+        do{
+            String title = DB.getData();
+            if (title.equals(DB.NOMOREDATA)) {
+                break;
+            } else {
+                titleArray.add(title);
+            }
+        } while (true);
+
+        DB.selectSQL("Select fldArtist from tblSonglist");
+        do{
+            String artist = DB.getData();
+            if (artist.equals(DB.NOMOREDATA)){
+                break;
+            }else{
+                artistArray.add(artist);
+            }
+        }while (true);
+
+        for (int i = 0; i < songIdArray.size(); i++) {
+            Songlist.add(new Songs(songIdArray.get(i), titleArray.get(i), artistArray.get(i)));
+        }
+        SongsTable.setItems(Songlist);
+    }
 
     //updates the PLaylistviewer
     public void updatePlaylistTable() {
@@ -114,12 +216,12 @@ public class Controller implements Initializable {
         PlayListArray.clear();
 
         do{
-            String PLaylistData = DB.getData();
-            if (PLaylistData.equals(DB.NOMOREDATA)){
+            String PlaylistData = DB.getData();
+            if (PlaylistData.equals(DB.NOMOREDATA)){
                 break;
             } else {
 
-                PlayListArray.add(new Playlist(PLaylistData));
+                PlayListArray.add(new Playlist(PlaylistData));
 
             }
         }while(true);
@@ -147,9 +249,6 @@ public class Controller implements Initializable {
     void search_song() {
         //Search function
 
-        SongId.setCellValueFactory(new PropertyValueFactory<Songs, Integer>("SongId"));
-        Title.setCellValueFactory(new PropertyValueFactory<Songs, String>("Title"));
-        Artist.setCellValueFactory(new PropertyValueFactory<Songs, String>("Artist"));
 
         SongsTable.setItems(Songlist);
         //ObservableList to filteredList
@@ -184,6 +283,7 @@ public class Controller implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        songList();
         updatePlaylistTable();
         search_song();
 
@@ -289,7 +389,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void handleNewPlayList() throws IOException {
+    private void handleNewPlayList() {
 
         //shows the textfield
         NewPlaylistName.setVisible(true);
@@ -303,19 +403,24 @@ public class Controller implements Initializable {
         newPlayList();
     }
 
-
-
     }
 
     @FXML
     private void handleDeletePlayList() {
-        Playlist SelectedPlaylist = PlayListList.getSelectionModel().getSelectedItem();
+        System.out.println(getPlaylistID);
 
-        System.out.println(SelectedPlaylist);
-        DB.deleteSQL("DELETE FROM tblPlaylists WHERE fldPLaylistName = '" + SelectedPlaylist + "'");
+        DB.deleteSQL("DELETE FROM tblPlaylistsSongs where fldPlaylistID = " + getPlaylistID);
+        DB.deleteSQL("Delete FROM tblPlaylists where fldPlaylistName = '" + getPlaylistName + "'");
+
 
         updatePlaylistTable();
 
+    }
+
+    @FXML
+    private void handleLibary() {
+        songList();
+        search_song();
     }
 
 }
