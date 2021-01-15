@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.CustomMenuItem?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -32,7 +35,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <ListView fx:id="PlayListList" onMousePressed="#choosePlaylist" prefHeight="295.0" prefWidth="181.0" />
+                  <ListView fx:id="PlayListList" onMousePressed="#choosePlaylist" prefHeight="295.0" prefWidth="181.0" style="-fx-background-color: #4682b4;" />
                   <TextField fx:id="NewPlaylistName" onKeyPressed="#handleEnterNewPlaylist" promptText="New Playlist" visible="false" />
                   <Button fx:id="NewPlaylist" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#handleNewPlayList" prefHeight="32.0" prefWidth="181.0" style="-fx-background-color: #4682b4 #4682b4;" text="New Playlist" textFill="WHITE">
                      <font>
@@ -51,24 +54,6 @@
          <center>
             <AnchorPane fx:id="ap" prefHeight="200.0" prefWidth="215.0" style="-fx-background-color: #add8e6;" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="pause" layoutX="233.0" layoutY="552.0" mnemonicParsing="false" onAction="#handlePause" prefHeight="46.0" prefWidth="62.0" style="-fx-background-color: #add8e6;">
-                     <graphic>
-                        <ImageView fitHeight="31.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@media/pause-button-png-transparent-pause-buttonpng-images-pluspng-png-pause-button-512_512.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="play" layoutX="283.0" layoutY="555.0" mnemonicParsing="false" onAction="#handlePlay" prefHeight="39.0" prefWidth="57.0" style="-fx-background-color: #add8e6 #add8e6;">
-                     <graphic>
-                        <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@media/play.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
                   <Pane layoutY="48.0" prefHeight="527.0" prefWidth="616.0">
                      <children>
                         <TableView fx:id="SongsTable" layoutX="2.0" layoutY="4.0" onMouseClicked="#displaySelectedItem" prefHeight="487.0" prefWidth="615.0" style="-fx-background-color: #add8e6;">
@@ -77,11 +62,44 @@
                               <TableColumn fx:id="Title" prefWidth="248.0" text="Title" />
                               <TableColumn fx:id="Artist" prefWidth="290.0" text="Artist" />
                            </columns>
+                           <contextMenu>
+                              <ContextMenu fx:id="ContexmenuSonglist">
+                                <items>
+                                    <Menu mnemonicParsing="false" text="Add to Playlist">
+                                       <items>
+                                          <CustomMenuItem mnemonicParsing="false">
+                                             <content>
+                                                <ListView fx:id="ContextMenuPlaylists" onMouseClicked="#addSongtoPlaylist" prefHeight="200.0" prefWidth="200.0" />
+                                             </content>
+                                          </CustomMenuItem>
+                                       </items>
+                                    </Menu>
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
                         </TableView>
                      </children>
                   </Pane>
                   <TextField fx:id="Search" layoutX="79.0" layoutY="24.0" prefHeight="25.0" prefWidth="247.0" promptText="Search" />
                   <Button fx:id="autoplayNext" layoutX="344.0" layoutY="571.0" mnemonicParsing="false" onAction="#handleautoplayNext" text="Autoplay Next" />
+                  <Button fx:id="play" layoutX="287.0" layoutY="547.0" mnemonicParsing="false" onAction="#handlePlay" prefHeight="51.0" prefWidth="57.0" style="-fx-background-color: #add8e6;">
+                     <graphic>
+                        <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@media/play.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="pause" layoutX="222.0" layoutY="549.0" mnemonicParsing="false" onAction="#handlePause" prefHeight="47.0" prefWidth="63.0" style="-fx-background-color: #add8e6 #add8e6;">
+                     <graphic>
+                        <ImageView fitHeight="33.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@media/pause-button-png-transparent-pause-buttonpng-images-pluspng-png-pause-button-512_512.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </AnchorPane>
          </center>

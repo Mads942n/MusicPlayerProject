@@ -1,22 +1,20 @@
 package sample;
 import javafx.collections.transformation.FilteredList;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
@@ -71,6 +69,12 @@ public class Controller implements Initializable {
 
     @FXML
     private Button DeletePlayList;
+    @FXML
+    private ContextMenu ContexmenuSonglist;
+
+    @FXML
+    private ListView<Playlist> ContextMenuPlaylists;
+
 
 
     private MediaPlayer mp;
@@ -80,7 +84,7 @@ public class Controller implements Initializable {
 
     private Boolean autoplay;
     private int autoplayInt;
-
+    private int SelectedSongid;
 
     private String getPlaylistID;
     private String filePath;
@@ -153,10 +157,11 @@ public class Controller implements Initializable {
         }catch (Exception e){
         }
 
+    }
 
+    void getPlaylists(){
 
-
-
+        ContextMenuPlaylists.setItems(PlayListArray);
 
     }
 
@@ -208,6 +213,8 @@ public class Controller implements Initializable {
         SongsTable.setItems(Songlist);
     }
 
+
+
     //updates the PLaylistviewer
     public void updatePlaylistTable() {
 
@@ -227,6 +234,7 @@ public class Controller implements Initializable {
         }while(true);
 
         PlayListList.setItems(PlayListArray);
+        getPlaylists();
 
     }
 
@@ -286,19 +294,7 @@ public class Controller implements Initializable {
         songList();
         updatePlaylistTable();
         search_song();
-
-        // Build the path to the location of the media file
-        path = new File("src/sample/media/SampleAudio.mp3").getAbsolutePath();
-        // Create new Media object (the actual media content)
-        me = new Media(new File(path).toURI().toString());
-        // Create new MediaPlayer and attach the media to be played
-        mp = new MediaPlayer(me);
-        //
-        // mp.setAutoPlay(true);
-        // If autoplay is turned of the method play(), stop(), pause() etc controls how/when medias are played
-        mp.setAutoPlay(false);
-
-
+        getPlaylists();
     }
 
     public void autoplayNext() {
@@ -335,24 +331,23 @@ public class Controller implements Initializable {
 
     @FXML
     private void displaySelectedItem() {
+        try {
+            //song selection:
+            Songs Song = SongsTable.getSelectionModel().getSelectedItem();
+            SelectedSongid = Integer.parseInt(Song.SongId);
 
-        Songs Song = SongsTable.getSelectionModel().getSelectedItem();
+        } catch (Exception e){
+            System.out.println("no song clicked");
+        }
 
+    }
 
-        DB.selectSQL("Select fldFilePath from tblSonglist where fldSongID = " + Song.SongId);
+    @FXML
+    void addSongtoPlaylist() {
+        Playlist getPlaylistName = ContextMenuPlaylists.getSelectionModel().getSelectedItem();
 
-        filePath = DB.getData();
-
-        path = new File("src/sample/media/" + filePath + ".mp3").getAbsolutePath();
-
-        me = new Media(new File(path).toURI().toString());
-
-        mp = new MediaPlayer(me);
-
-        mp.setAutoPlay(true);
-
-
-        System.out.println("Song ID = " + Song.SongId + "\nFilename = " + filePath);
+        DB.insertSQL("INSERT INTO tblPlaylistsSongs (fldPlaylistID) SELECT fldPlaylistID " +
+                "FROM tblPlaylists WHERE fldPlaylistName = '" + getPlaylistName.PlayListTitle + "'" );
 
 
     }
@@ -362,17 +357,49 @@ public class Controller implements Initializable {
      * Handler for the play button
      */
     private void handlePlay() {
+        try {
 
-        mp.play();
-        mp.setAutoPlay(true);
+
+            //getting selected song from database
+            DB.selectSQL("Select fldFilePath from tblSonglist where fldSongID = " + SelectedSongid);
+
+            filePath = DB.getData();
+
+            //location of the media files
+            path = new File("src/sample/media/" + filePath + ".mp3").getAbsolutePath();
+
+            // new Media object
+            me = new Media(new File(path).toURI().toString());
+
+            mp = new MediaPlayer(me);
+
+
+            // If autoplay is turned of the method play(), stop(), pause() etc controls how/when medias are played
+            mp.setAutoPlay(false);
+
+            mp.stop();
+
+
+            //starts the new song
+
+            mp.play();
+
+            System.out.println("SELECTED SONG:" + SelectedSongid);
+
+        } catch (Exception e){
+            System.out.println("no song selected");
+        }
+
     }
 
     @FXML
     private void handlePause() {
+        try {
+            mp.pause();
+        } catch (Exception e){
+            System.out.println("no song is currently playing");
+        }
 
-
-        // Play the mediaPlayer with the attached media
-        mp.pause();
     }
 
     @FXML
