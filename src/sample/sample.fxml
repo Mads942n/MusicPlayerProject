@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CustomMenuItem?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -74,6 +75,7 @@
                                           </CustomMenuItem>
                                        </items>
                                     </Menu>
+                                    <MenuItem fx:id="RemoveFromPlaylist" mnemonicParsing="false" onAction="#deleteSongFromPlaylist" text="Remove From This Playlist" visible="false" />
                                 </items>
                               </ContextMenu>
                            </contextMenu>
