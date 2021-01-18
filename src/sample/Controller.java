@@ -349,6 +349,9 @@ public class Controller implements Initializable {
         DB.insertSQL("INSERT INTO tblPlaylistsSongs (fldPlaylistID) SELECT fldPlaylistID " +
                 "FROM tblPlaylists WHERE fldPlaylistName = '" + getPlaylistName.PlayListTitle + "'" );
 
+        DB.updateSQL("UPDATE tblPlaylistsSongs SET fldSongID = " + SelectedSongid +" WHERE fldSongID IS NULL");
+
+
 
     }
 
