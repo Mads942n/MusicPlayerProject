@@ -76,6 +76,10 @@ public class Controller implements Initializable {
     private ListView<Playlist> ContextMenuPlaylists;
 
 
+    @FXML
+    private MenuItem RemoveFromPlaylist;
+
+
 
     private MediaPlayer mp;
     private Media me;
@@ -104,6 +108,7 @@ public class Controller implements Initializable {
         titleArray.clear();
         artistArray.clear();
         Songlist.clear();
+        RemoveFromPlaylist.setVisible(true);
         try {
             Playlist SelectedPlaylist = PlayListList.getSelectionModel().getSelectedItem();
             getPlaylistName = SelectedPlaylist.PlayListTitle;
@@ -449,8 +454,17 @@ public class Controller implements Initializable {
 
     @FXML
     private void handleLibary() {
+        RemoveFromPlaylist.setVisible(false);
         songList();
         search_song();
+    }
+
+    @FXML
+    void deleteSongFromPlaylist() {
+        DB.deleteSQL("DELETE From tblPlaylistsSongs where fldPlaylistID = " + getPlaylistID + " AND fldSongID = " + SelectedSongid);
+        choosePlaylist();
+
+
     }
 
 }
