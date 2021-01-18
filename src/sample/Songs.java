@@ -2,32 +2,32 @@ package sample;
 
 public class Songs {
 
-    int SongId;
+    String SongId;
     String title;
 
     String artist;
 
-    public String getArtist() {
-        return artist;
+
+    public Songs(String SongId, String title, String artist) {
+        this.SongId = SongId;
+        this.title = title;
+        this.artist = artist;
     }
 
     public void setArtist(String artist) {
         this.artist = artist;
     }
 
-    public Songs(int SongId, String title, String artist) {
-        this.SongId = SongId;
-        this.title = title;
-        this.artist = artist;
-
+    public String getArtist() {
+        return artist;
     }
 
-    public int getSongId() {
+    public void setSongId(String SongId) {
+        this.SongId = SongId;
+    }
+
+    public String getSongId() {
         return SongId;
-    }
-
-    public void setSongId(int SongId) {
-        this.SongId = SongId;
     }
 
     public void setTitle(String title) {
