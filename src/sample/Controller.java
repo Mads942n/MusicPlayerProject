@@ -35,7 +35,7 @@ public class Controller implements Initializable {
     private Button play;
 
     @FXML
-    private Button Libary;
+    private Button Library;
 
     @FXML
     private AnchorPane ap;
@@ -453,7 +453,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void handleLibary() {
+    private void handleLibrary() {
         RemoveFromPlaylist.setVisible(false);
         songList();
         search_song();
